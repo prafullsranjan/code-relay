@@ -1,0 +1,6 @@
+images:
+  api: ghcr.io/example/coderelay-api:latest
+  collab: ghcr.io/example/coderelay-collab:latest
+  executor: ghcr.io/example/coderelay-executor:latest
+  web: ghcr.io/example/coderelay-web:latest
+runtimeClassName: kata-fc

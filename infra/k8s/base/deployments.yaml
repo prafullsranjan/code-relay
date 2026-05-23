@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: code-relay
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: api }
+  template:
+    metadata:
+      labels: { app: api }
+    spec:
+      containers:
+        - name: api
+          image: ghcr.io/example/coderelay-api:latest
+          ports: [{ containerPort: 3001 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collab
+  namespace: code-relay
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: collab }
+  template:
+    metadata:
+      labels: { app: collab }
+    spec:
+      containers:
+        - name: collab
+          image: ghcr.io/example/coderelay-collab:latest
+          ports: [{ containerPort: 3002 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: executor
+  namespace: code-relay
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: executor }
+  template:
+    metadata:
+      labels: { app: executor }
+    spec:
+      containers:
+        - name: executor
+          image: ghcr.io/example/coderelay-executor:latest
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: code-relay
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: web }
+  template:
+    metadata:
+      labels: { app: web }
+    spec:
+      containers:
+        - name: web
+          image: ghcr.io/example/coderelay-web:latest
+          ports: [{ containerPort: 3000 }]

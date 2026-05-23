@@ -1,0 +1,127 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum WorkspaceMode {
+  LOCAL
+  GHE_BOUND
+}
+
+enum InviteStatus {
+  PENDING
+  REDEEMED
+  EXPIRED
+  REVOKED
+}
+
+enum SessionStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+enum RunStatus {
+  QUEUED
+  RUNNING
+  SUCCEEDED
+  FAILED
+  CANCELED
+  TIMEOUT
+}
+
+model Workspace {
+  id        String        @id @default(cuid())
+  ownerId   String
+  mode      WorkspaceMode
+  title     String
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  invites       Invite[]
+  guestSessions GuestSession[]
+  runs          Run[]
+  auditEvents   AuditEvent[]
+}
+
+model Invite {
+  id               String       @id @default(cuid())
+  workspaceId      String
+  createdByOwnerId String
+  tokenHash        String
+  capabilitiesJson Json
+  status           InviteStatus @default(PENDING)
+  expiresAt        DateTime
+  redeemedAt       DateTime?
+  redeemedSessionId String?
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status])
+}
+
+model GuestSession {
+  id               String        @id
+  workspaceId      String
+  ownerId          String
+  capabilitiesJson Json
+  status           SessionStatus @default(ACTIVE)
+  expiresAt        DateTime
+  lastSeenAt       DateTime      @default(now())
+  createdAt        DateTime      @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status])
+}
+
+model Run {
+  id              String    @id @default(cuid())
+  workspaceId     String
+  requestedByType String
+  requestedById   String
+  language        String
+  version         String?
+  status          RunStatus @default(QUEUED)
+  limitsJson      Json
+  createdAt       DateTime  @default(now())
+  startedAt       DateTime?
+  finishedAt      DateTime?
+  exitCode        Int?
+
+  workspace Workspace  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  runEvents RunEvent[]
+
+  @@index([workspaceId, status])
+}
+
+model RunEvent {
+  id     Int      @id @default(autoincrement())
+  runId  String
+  ts     DateTime @default(now())
+  stream String
+  chunk  String
+
+  run Run @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([runId, id])
+}
+
+model AuditEvent {
+  id          Int      @id @default(autoincrement())
+  ts          DateTime @default(now())
+  ownerId     String
+  workspaceId String
+  actorType   String
+  actorId     String
+  action      String
+  metaJson    Json
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, ts])
+}

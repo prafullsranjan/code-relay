@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+spec:
+  selector:
+    matchLabels: { app: api }
+  template:
+    metadata:
+      labels: { app: api }
+    spec:
+      containers:
+        - name: api
+          image: {{ .Values.images.api }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collab
+spec:
+  selector:
+    matchLabels: { app: collab }
+  template:
+    metadata:
+      labels: { app: collab }
+    spec:
+      containers:
+        - name: collab
+          image: {{ .Values.images.collab }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: executor
+spec:
+  selector:
+    matchLabels: { app: executor }
+  template:
+    metadata:
+      labels: { app: executor }
+    spec:
+      containers:
+        - name: executor
+          image: {{ .Values.images.executor }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  selector:
+    matchLabels: { app: web }
+  template:
+    metadata:
+      labels: { app: web }
+    spec:
+      containers:
+        - name: web
+          image: {{ .Values.images.web }}
