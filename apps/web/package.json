@@ -1,0 +1,25 @@
+{
+  "name": "@coderelay/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "DOTENV_CONFIG_PATH=../../.env next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "test": "vitest run",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@hocuspocus/provider": "^2.15.2",
+    "@monaco-editor/react": "^4.7.0",
+    "next": "15.0.4",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "y-monaco": "^0.1.6",
+    "yjs": "^13.6.20"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.14"
+  }
+}
